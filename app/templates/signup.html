@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up - MoodTunes</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="neon-background"></div>
+    <header>
+        <nav>
+            <div class="logo" id="refresh-button">MoodTunes</div>
+            <ul class="nav-links">
+                <li><a href="/">Home</a></li>
+                <li><a href="/about">About</a></li>
+                {% if 'user_id' in session %}
+                    <li class="profile-icon-container">
+                        <a href="/profile">
+                            <img src="{{ user.profile_picture if user.profile_picture else url_for('static', filename='default_profile.jpg') }}" alt="Profile" class="profile-icon">
+                        </a>
+                    </li>
+                    <li><a href="/signout">Sign Out</a></li>
+                {% else %}
+                    <li><a href="/signin">Sign In</a></li>
+                {% endif %}
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <section class="signup">
+            <h1>Sign Up</h1>
+            <p>Create an account to get personalized music recommendations based on your mood.</p>
+            <form action="/signup" method="POST">
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" name="email" placeholder="Enter your email" required>
+                </div>
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" name="password" placeholder="Enter your password" required>
+                </div>
+                <button type="submit" class="cta-button">Sign Up</button>
+            </form>
+            <div class="hyperlinks">
+                <p>Already have an account? <a href="/signin">Sign In</a></p>
+            </div>
+        </section>
+    </main>
+    <script>
+        document.getElementById('refresh-button').addEventListener('click', function() {
+            location.reload();
+        });
+    </script>
+</body>
+</html>

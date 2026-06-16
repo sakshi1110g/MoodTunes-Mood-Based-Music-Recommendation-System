@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}MoodTunes{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    {% block extra_css %}{% endblock %}
+</head>
+<body class="{% if request.endpoint in ['about', 'profile', 'capture-mood'] %}scroll-enabled{% else %}no-scroll{% endif %}">
+    <div class="neon-background"></div>
+    <header>
+        <nav>
+            <div class="logo" id="refresh-button">MoodTunes</div>
+            <ul class="nav-links">
+                <li><a href="/">Home</a></li>
+                <li><a href="/about">About</a></li>
+                {% if 'user_id' in session %}
+                    <li class="profile-icon-container">
+                        <a href="/profile">
+                            <img src="{{ user.profile_picture if user.profile_picture else url_for('static', filename='default_profile.jpg') }}" alt="Profile" class="profile-icon">
+                        </a>
+                    </li>
+                    <li><a href="/signout">Sign Out</a></li>
+                {% else %}
+                    <li><a href="/signin">Sign In</a></li>
+                {% endif %}
+            </ul>
+        </nav>
+    </header>
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

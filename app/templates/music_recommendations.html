@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+{% block title %}Music Recommendations - MoodTunes{% endblock %}
+
+{% block content %}
+<section class="music-recommendations hero">
+    <h1>Music Recommendations for {{ mood }}</h1>
+    <p>Here are some songs that match your mood:</p>
+
+    <div class="songs-list">
+        {% for song in songs %}
+            <div class="song">
+                <h3>{{ song.title }}</h3>
+                <p>Artist: {{ song.artist }}</p>
+                <a href="{{ song.link }}" target="_blank" class="cta-button">Listen on Spotify</a>
+            </div>
+        {% endfor %}
+    </div>
+
+    <a href="{{ url_for('detect_mood', image=image_url.split('/')[-1]) }}" class="cta-button">Back to Mood Result</a>
+</section>
+{% endblock %}

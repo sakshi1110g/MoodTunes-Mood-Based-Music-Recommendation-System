@@ -1,0 +1,10 @@
+venv/
+__pycache__/
+*.pyc
+instance/
+users.db
+.env
+
+app/static/uploads/
+app/static/mood_images/
+taskforge/

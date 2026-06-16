@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block title %}Mood Result - MoodTunes{% endblock %}
+
+{% block content %}
+<section class="result hero">
+    <h1>Your Mood Result</h1>
+    <p>Here's what we detected from your photo:</p>
+
+    <div class="result-container">
+        <div class="mood-result">
+            <h2>Mood: <span id="dominantEmotion">{{ dominant_emotion }}</span></h2>
+            <p>Emotion Scores:</p>
+            <ul>
+                {% for emotion, score in emotion_scores.items() %}
+                    <li>{{ emotion }}: {{ score }}%</li>
+                {% endfor %}
+            </ul>
+        </div>
+
+        <div class="image-buttons">
+            <div class="uploaded-image">
+                <img src="{{ image_url }}" alt="Uploaded Image" style="max-width: 300px; border-radius: 10px;">
+            </div>
+
+            <div class="buttons">
+                <a href="{{ url_for('capture_mood') }}" class="cta-button">Capture Another Mood</a>
+                <a href="{{ url_for('music_recommendations', mood=dominant_emotion, image=image_url.split('/')[-1]) }}" class="cta-button">Get Music Recommendations</a>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

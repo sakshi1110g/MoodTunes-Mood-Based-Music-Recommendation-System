@@ -1,0 +1,88 @@
+{% extends "base.html" %}
+
+{% block title %}Capture Mood - MoodTunes{% endblock %}
+
+{% block content %}
+<section class="capture-mood hero">
+    <h1>Capture Your Mood</h1>
+    <p>Take a photo to detect your mood and get music recommendations.</p>
+
+    <div class="camera-container">
+        <video id="cameraFeed" autoplay></video>
+        <button id="captureButton" class="cta-button">Capture Photo</button>
+    </div>
+
+    <canvas id="photoCanvas" style="display:none;"></canvas>
+
+    <form id="photoForm" action="/save_photo" method="POST" enctype="multipart/form-data">
+        <input type="file" id="photoInput" name="file" accept="image/*" style="display:none;">
+        <button type="submit" id="submitButton" class="cta-button" style="display:none;">Save and Detect Mood</button>
+    </form>
+
+    <script>
+        const video = document.getElementById('cameraFeed');
+        const captureButton = document.getElementById('captureButton');
+        const canvas = document.getElementById('photoCanvas');
+        const photoInput = document.getElementById('photoInput');
+        const submitButton = document.getElementById('submitButton');
+
+        navigator.mediaDevices.getUserMedia({ video: true })
+            .then((stream) => {
+                video.srcObject = stream;
+            })
+            .catch((error) => {
+                console.error('Error accessing the camera:', error);
+                alert('Error accessing the camera. Please allow camera permissions.');
+            });
+
+        captureButton.addEventListener('click', () => {
+            const context = canvas.getContext('2d');
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+            context.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+            canvas.toBlob((blob) => {
+                const file = new File([blob], 'mood_photo.png', { type: 'image/png' });
+                const dataTransfer = new DataTransfer();
+                dataTransfer.items.add(file);
+                photoInput.files = dataTransfer.files;
+
+                submitButton.style.display = 'block';
+                captureButton.style.display = 'none'; 
+            }, 'image/png');
+        });
+
+        submitButton.addEventListener('click', (e) => {
+            e.preventDefault(); 
+
+            const file = photoInput.files[0];
+            if (!file) {
+                console.error("No file selected");
+                alert("No file selected");
+                return;
+            }
+            console.log("File to upload:", file);
+
+            const formData = new FormData(document.getElementById('photoForm'));
+            fetch('/save_photo', {
+                method: 'POST',
+                body: formData,
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    console.error("Error from server:", data.error);
+                    alert(data.error);
+                } else {
+                    console.log("Photo saved successfully:", data);
+                    window.location.href = `/detect_mood?image=${data.image_url}`;
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('An error occurred while saving the photo.');
+            });
+        });
+    </script>
+</section>
+{% endblock %}
